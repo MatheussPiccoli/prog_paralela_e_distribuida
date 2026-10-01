@@ -1,0 +1,76 @@
+a) Quantas threads podem existir simultaneamente após a criação das duas threads? 
+
+Apenas as 2 threads criadas + a main poderam rodar enquanto o programa estiver em execução, por conta do pthread_join, que faz com que a thread passada como argumento seja bloqueada até o termino de sua execução
+
+b) Qual é a função da thread principal (main)?
+
+Criar as threads 1 e 2, dar join nelas para evitar conflito, rodar as 2 threads e encerrar o programa ao final da execução.
+
+c) Para que serve a função pthread_create? 
+
+pthread_create serve para criar uma nova thread no programa em execução. O usuário deve passar como argumentos o id da thread, atributos, rotina e argumentos.
+
+d) Para que serve pthread_join?
+
+Ela bloqueia a thread que entra em execução. Serve para manter a consistência do programa.
+
+e) O valor da variável i é compartilhado entre as duas threads? Justifique. 
+
+Não. I não é uma variável global. Cada thread cria uma instância diferente da função *imprime_msg, o que faz com que variáveis criadas dentro de cada instância tenham seus valores válidos apenas dentro da execução desta mesma instância. Ou seja, asa variáveis i ocupam espaços diferentes da memória para cada thread.
+
+f) Execute o programa mais de uma vez. A ordem das mensagens impressas é sempre 
+exatamente a mesma? Explique o que você observou.
+
+Rodei algumas vezes em meu computador, tudo rodou como deveria rodar, criando ambas as threads, printando, e logo após começando as prints das threads junto com o contador. Porém, no pc do lab da universidade, as vezes a contagem "0" da thread 1 era printada antes da criação da thread 2.
+
+Exercício 2. Altere o exercício anterior para criar quatro threads. Cada thread deverá 
+receber um identificador diferente e imprimir: 
+Thread 1 executando 
+Thread 2 executando 
+Thread 3 executando 
+Thread 4 executando 
+Cada thread deverá imprimir sua mensagem cinco vezes. Adicione um pequeno intervalo 
+com: usleep(100000). Execute o programa várias vezes e observe a ordem das 
+mensagens. 
+Responda: 
+a) A ordem de execução das threads é determinada pela ordem em que elas foram criadas? 
+
+não necessariamente. Nas 2 vezes que rodei o programa, a primeira thread a terminar sua execução não foi a thread que iniciou primeiro.
+
+b) É possível prever exatamente qual thread executará primeiro?
+
+A primeira thread a ser criada, em meus testes, sempre é a primeira a ser executada (o print sempre é o primeiro). Porém, após isso, não sei dizer como a cpu decide a quem irá dar seu tempo.
+
+Exercício 3. No Exercício 1, a variável:  
+int i = 0;  
+é local à função executada por cada thread. Modifique o programa para que i seja uma 
+variável global e remova sua declaração de dentro de imprime_msg. Execute o programa 
+várias vezes. 
+Responda: 
+a) Quantas variáveis i existiam no programa original?
+
+Duas, uma para cada thread criada.
+
+b) Quantas existem após i se tornar global?
+
+Agora, todas as thread que rodam a função imprime_msg compartilham o mesmo i, que é único.
+
+c) As duas threads passam a modificar a mesma variável?
+
+sim. Ambas as thread manuseiam a mesma variável.
+
+d) O comportamento do programa mudou? Como?
+
+Sim. Antes, o programa fazia a contagem de cada thread de 0 até 9. Cada programa printava 10 vezes a mensagem na tela. Agora, como cada thread adiciona +1 a mesma variável, O número de prints feitos por cada thread diminuiu basicamente pela metade, e por estarem modificando a mesma variável com ambas em execução, as prints também podem sair fora da ordem numérica desejada.
+
+e) Por que o uso de uma variável global modifica o comportamento do programa?
+
+Pois a variável global faz com que ela seja vista por todo o programa. É uma coisa boa em várias situações, mas exige cuidado na hora de manuseá-las, garantindo que não haja 2 blocos/threads escrevendo em cima da mesma variável ao mesmo tempo.
+
+Exercício 4. Implemente um programa que crie N threads, leia e imprima uma posição P de 
+um vetor qualquer. O vetor deve ter sido previamente preenchido com N valores distintos. A 
+posição P é baseada no id único de cada thread, representado por um valor atribuído na sua 
+criação. Tanto o id quanto o ponteiro para o vetor devem ser partes de uma estrutura (args), 
+que deve ser passada como atributo para cada thread. A função de cada thread deve 
+manipular esta estrutura, imprimindo a mensagem: Sou a thread <ID>, acessei o vetor 
+li a letra <LETRA>.
